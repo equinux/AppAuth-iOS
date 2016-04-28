@@ -16,7 +16,12 @@
         limitations under the License.
  */
 
-#import <UIKit/UIKit.h>
+#import <TargetConditionals.h>
+#if TARGET_OS_IPHONE
+# import <UIKit/UIKit.h>
+#else
+# import <Cocoa/Cocoa.h>
+#endif
 
 @class OIDAuthorization;
 @class OIDAuthorizationRequest;
@@ -115,10 +120,17 @@ typedef NSDictionary<NSString *, NSString *> *_Nullable OIDTokenEndpointParamete
         receives a @c OIDAuthorizationFlowSession.cancel message, or after processing a
         @c OIDAuthorizationFlowSession.resumeAuthorizationFlowWithURL: message.
  */
+#if TARGET_OS_IPHONE
 + (id<OIDAuthorizationFlowSession>)
     presentAuthorizationRequest:(OIDAuthorizationRequest *)request
        presentingViewController:(UIViewController *)presentingViewController
                        callback:(OIDAuthorizationCallback)callback;
+#else
++ (id<OIDAuthorizationFlowSession>)
+    presentAuthorizationRequest:(OIDAuthorizationRequest *)request
+       presentingViewController:(NSViewController *)presentingViewController
+                       callback:(OIDAuthorizationCallback)callback;
+#endif
 
 /*! @fn performTokenRequest:callback:
     @brief Performs a token request.

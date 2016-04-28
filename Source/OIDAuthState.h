@@ -15,7 +15,12 @@
         See the License for the specific language governing permissions and
         limitations under the License.
  */
-#import <UIKit/UIKit.h>
+#import <TargetConditionals.h>
+#if TARGET_OS_IPHONE
+# import <UIKit/UIKit.h>
+#else
+# import <Cocoa/Cocoa.h>
+#endif
 
 @class OIDAuthorizationRequest;
 @class OIDAuthorizationResponse;
@@ -131,10 +136,17 @@ typedef void (^OIDAuthStateAuthorizationCallback)(OIDAuthState *_Nullable authSt
         receives a @c OIDAuthorizationFlowSession.cancel message, or after processing a
         @c OIDAuthorizationFlowSession.resumeAuthorizationFlowWithURL: message.
  */
+#if TARGET_OS_IPHONE
 + (id<OIDAuthorizationFlowSession>)authStateByPresentingAuthorizationRequest:
     (OIDAuthorizationRequest *)authorizationRequest
     presentingViewController:(UIViewController *)presentingViewController
                     callback:(OIDAuthStateAuthorizationCallback)callback;
+#else
++ (id<OIDAuthorizationFlowSession>)authStateByPresentingAuthorizationRequest:
+    (OIDAuthorizationRequest *)authorizationRequest
+    presentingViewController:(NSViewController *)presentingViewController
+                    callback:(OIDAuthStateAuthorizationCallback)callback;
+#endif
 
 /*! @fn init
     @internal

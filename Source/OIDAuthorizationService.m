@@ -18,7 +18,11 @@
 
 #import "OIDAuthorizationService.h"
 
-#import <SafariServices/SafariServices.h>
+#if TARGET_OS_IPHONE
+# import <SafariServices/SafariServices.h>
+#else
+# import <WebKit/WebKit.h>
+#endif
 
 #import "OIDAuthorizationRequest.h"
 #import "OIDAuthorizationResponse.h"
@@ -39,20 +43,32 @@ static NSString *const kOpenIDConfigurationWellKnownPath = @".well-known/openid-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface OIDAuthorizationFlowSessionImplementation : NSObject <OIDAuthorizationFlowSession,
-                                                                 SFSafariViewControllerDelegate>
+#if TARGET_OS_IPHONE
+                                                                 SFSafariViewControllerDelegate
+#else
+                                                                 WKNavigationDelegate
+#endif
+                                                                >
 
 - (instancetype)init NS_UNAVAILABLE;
 
 - (nullable instancetype)initWithRequest:(OIDAuthorizationRequest *)request
     NS_DESIGNATED_INITIALIZER;
 
+#if TARGET_OS_IPHONE
 - (void)presentSafariViewControllerWithViewController:(UIViewController *)parentViewController
     callback:(OIDAuthorizationCallback)authorizationFlowCallback;
+#else
+- (void)presentSafariViewControllerWithViewController:(NSViewController *)parentViewController
+    callback:(OIDAuthorizationCallback)authorizationFlowCallback;
+#endif
 
 @end
 
 @implementation OIDAuthorizationFlowSessionImplementation {
+#if TARGET_OS_IPHONE
   __weak SFSafariViewController *_safariVC;
+#endif
   OIDAuthorizationRequest *_request;
   OIDAuthorizationCallback _pendingauthorizationFlowCallback;
 }
@@ -65,6 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
   return self;
 }
 
+#if TARGET_OS_IPHONE
 - (void)presentSafariViewControllerWithViewController:(UIViewController *)parentViewController
     callback:(OIDAuthorizationCallback)authorizationFlowCallback {
   _pendingauthorizationFlowCallback = authorizationFlowCallback;
@@ -85,7 +102,23 @@ NS_ASSUME_NONNULL_BEGIN
     }
   }
 }
+#else
+- (void)presentSafariViewControllerWithViewController:(NSViewController *)parentViewController
+    callback:(OIDAuthorizationCallback)authorizationFlowCallback {
+  _pendingauthorizationFlowCallback = authorizationFlowCallback;
+  NSURL *URL = [_request authorizationRequestURL];
+  
+  BOOL openedSafari = [[NSWorkspace sharedWorkspace] openURL:URL];
+  if (!openedSafari) {
+    NSError *safariError = [OIDErrorUtilities errorWithCode:OIDErrorCodeSafariOpenError
+                                            underlyingError:nil
+                                                description:@"Unable to open Safari."];
+    [self didFinishWithResponse:nil error:safariError];
+  }
+}
+#endif
 
+#if TARGET_OS_IPHONE
 - (void)cancel {
   SFSafariViewController *safari = _safariVC;
   _safariVC = nil;
@@ -96,6 +129,10 @@ NS_ASSUME_NONNULL_BEGIN
     [self didFinishWithResponse:nil error:error];
   }];
 }
+#else
+- (void)cancel {
+}
+#endif
 
 - (BOOL)shouldHandleURL:(NSURL *)URL {
   NSURL *standardizedURL = [URL standardizedURL];
@@ -153,6 +190,7 @@ NS_ASSUME_NONNULL_BEGIN
                             userInfo:userInfo];
   }
 
+#if TARGET_OS_IPHONE
   if (_safariVC) {
     SFSafariViewController *safari = _safariVC;
     _safariVC = nil;
@@ -162,16 +200,21 @@ NS_ASSUME_NONNULL_BEGIN
   } else {
     [self didFinishWithResponse:response error:error];
   }
+#else
+  [self didFinishWithResponse:response error:error];
+#endif
 
   return YES;
 }
 
+#if TARGET_OS_IPHONE
 - (void)safariViewControllerDidFinish:(SFSafariViewController *)controller {
   NSError *error = [OIDErrorUtilities errorWithCode:OIDErrorCodeProgramCanceledAuthorizationFlow
                                     underlyingError:nil
                                         description:nil];
   [self didFinishWithResponse:nil error:error];
 }
+#endif
 
 /*! @fn didFinishWithResponse:error:
     @brief Invokes the pending callback and performs cleanup.
@@ -181,7 +224,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)didFinishWithResponse:(nullable OIDAuthorizationResponse *)response
                         error:(nullable NSError *)error {
   OIDAuthorizationCallback callback = _pendingauthorizationFlowCallback;
+#if TARGET_OS_IPHONE
   _safariVC = nil;
+#endif
   _pendingauthorizationFlowCallback = nil;
 
   if (callback) {
@@ -262,6 +307,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Authorization Endpoint
 
+#if TARGET_OS_IPHONE
 + (id<OIDAuthorizationFlowSession>)
     presentAuthorizationRequest:(OIDAuthorizationRequest *)request
        presentingViewController:(UIViewController *)presentingViewController
@@ -272,6 +318,18 @@ NS_ASSUME_NONNULL_BEGIN
                                              callback:callback];
   return flow;
 }
+#else
++ (id<OIDAuthorizationFlowSession>)
+    presentAuthorizationRequest:(OIDAuthorizationRequest *)request
+       presentingViewController:(NSViewController *)presentingViewController
+                       callback:(OIDAuthorizationCallback)callback {
+  OIDAuthorizationFlowSessionImplementation *flow =
+      [[OIDAuthorizationFlowSessionImplementation alloc] initWithRequest:request];
+  [flow presentSafariViewControllerWithViewController:presentingViewController
+                                             callback:callback];
+  return flow;
+}
+#endif
 
 #pragma mark - Token Endpoint
 

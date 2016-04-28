@@ -40,6 +40,23 @@
 		341742241C5D8317000EF209 /* UnitTestsInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 341742231C5D8317000EF209 /* UnitTestsInfo.plist */; };
 		3417422B1C5D8502000EF209 /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3417422A1C5D8502000EF209 /* SafariServices.framework */; };
 		3417422D1C5D850C000EF209 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3417422C1C5D850C000EF209 /* Security.framework */; };
+		86EFCAEE1CD202BA0083BC18 /* OIDAuthorizationRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 341741B51C5D8243000EF209 /* OIDAuthorizationRequest.m */; };
+		86EFCAEF1CD202BE0083BC18 /* OIDAuthorizationResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 341741B71C5D8243000EF209 /* OIDAuthorizationResponse.m */; };
+		86EFCAF01CD202C10083BC18 /* OIDAuthorizationService.m in Sources */ = {isa = PBXBuildFile; fileRef = 341741B91C5D8243000EF209 /* OIDAuthorizationService.m */; };
+		86EFCAF11CD202C50083BC18 /* OIDAuthState.m in Sources */ = {isa = PBXBuildFile; fileRef = 341741BB1C5D8243000EF209 /* OIDAuthState.m */; };
+		86EFCAF21CD202CA0083BC18 /* OIDError.m in Sources */ = {isa = PBXBuildFile; fileRef = 341741C01C5D8243000EF209 /* OIDError.m */; };
+		86EFCAF31CD202CE0083BC18 /* OIDErrorUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 341741C21C5D8243000EF209 /* OIDErrorUtilities.m */; };
+		86EFCAF41CD202D30083BC18 /* OIDFieldMapping.m in Sources */ = {isa = PBXBuildFile; fileRef = 341741C41C5D8243000EF209 /* OIDFieldMapping.m */; };
+		86EFCAF51CD202D60083BC18 /* OIDGrantTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 341741C61C5D8243000EF209 /* OIDGrantTypes.m */; };
+		86EFCAF61CD202DA0083BC18 /* OIDResponseTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 341741C81C5D8243000EF209 /* OIDResponseTypes.m */; };
+		86EFCAF71CD202DD0083BC18 /* OIDScopes.m in Sources */ = {isa = PBXBuildFile; fileRef = 341741CA1C5D8243000EF209 /* OIDScopes.m */; };
+		86EFCAF81CD202E10083BC18 /* OIDScopeUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 341741CC1C5D8243000EF209 /* OIDScopeUtilities.m */; };
+		86EFCAF91CD202E50083BC18 /* OIDServiceConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 341741CE1C5D8243000EF209 /* OIDServiceConfiguration.m */; };
+		86EFCAFA1CD202E80083BC18 /* OIDServiceDiscovery.m in Sources */ = {isa = PBXBuildFile; fileRef = 341741D01C5D8243000EF209 /* OIDServiceDiscovery.m */; };
+		86EFCAFB1CD202EC0083BC18 /* OIDTokenRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 341741D21C5D8243000EF209 /* OIDTokenRequest.m */; };
+		86EFCAFC1CD202EF0083BC18 /* OIDTokenResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 341741D41C5D8243000EF209 /* OIDTokenResponse.m */; };
+		86EFCAFD1CD202F40083BC18 /* OIDTokenUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 341741D61C5D8243000EF209 /* OIDTokenUtilities.m */; };
+		86EFCAFE1CD202F90083BC18 /* OIDURLQueryComponent.m in Sources */ = {isa = PBXBuildFile; fileRef = 341741D81C5D8243000EF209 /* OIDURLQueryComponent.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -128,6 +145,7 @@
 		341742231C5D8317000EF209 /* UnitTestsInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UnitTestsInfo.plist; sourceTree = "<group>"; };
 		3417422A1C5D8502000EF209 /* SafariServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
 		3417422C1C5D850C000EF209 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		86EFCAE51CD202070083BC18 /* libAppAuth OSX.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libAppAuth OSX.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -145,6 +163,13 @@
 				3417422D1C5D850C000EF209 /* Security.framework in Frameworks */,
 				3417422B1C5D8502000EF209 /* SafariServices.framework in Frameworks */,
 				341741F51C5D8283000EF209 /* libAppAuth.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86EFCAE21CD202070083BC18 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -166,6 +191,7 @@
 			children = (
 				340E737C1C5D819B0076B1F6 /* libAppAuth.a */,
 				341741F01C5D8283000EF209 /* AppAuthTests.xctest */,
+				86EFCAE51CD202070083BC18 /* libAppAuth OSX.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -254,6 +280,16 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		86EFCAE31CD202070083BC18 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		340E737B1C5D819B0076B1F6 /* AppAuth */ = {
 			isa = PBXNativeTarget;
@@ -290,6 +326,23 @@
 			productReference = 341741F01C5D8283000EF209 /* AppAuthTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		86EFCAE41CD202070083BC18 /* AppAuth OSX */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 86EFCAED1CD202070083BC18 /* Build configuration list for PBXNativeTarget "AppAuth OSX" */;
+			buildPhases = (
+				86EFCAE11CD202070083BC18 /* Sources */,
+				86EFCAE21CD202070083BC18 /* Frameworks */,
+				86EFCAE31CD202070083BC18 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "AppAuth OSX";
+			productName = "AppAuth OSX";
+			productReference = 86EFCAE51CD202070083BC18 /* libAppAuth OSX.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -304,6 +357,9 @@
 					};
 					341741EF1C5D8283000EF209 = {
 						CreatedOnToolsVersion = 7.2;
+					};
+					86EFCAE41CD202070083BC18 = {
+						CreatedOnToolsVersion = 7.3;
 					};
 				};
 			};
@@ -320,6 +376,7 @@
 			projectRoot = "";
 			targets = (
 				340E737B1C5D819B0076B1F6 /* AppAuth */,
+				86EFCAE41CD202070083BC18 /* AppAuth OSX */,
 				341741EF1C5D8283000EF209 /* AppAuthTests */,
 			);
 		};
@@ -377,6 +434,30 @@
 				341742191C5D82D3000EF209 /* OIDAuthStateTests.m in Sources */,
 				3417421D1C5D82D3000EF209 /* OIDServiceConfigurationTests.m in Sources */,
 				3417421C1C5D82D3000EF209 /* OIDScopesTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		86EFCAE11CD202070083BC18 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				86EFCAF81CD202E10083BC18 /* OIDScopeUtilities.m in Sources */,
+				86EFCAF41CD202D30083BC18 /* OIDFieldMapping.m in Sources */,
+				86EFCAEE1CD202BA0083BC18 /* OIDAuthorizationRequest.m in Sources */,
+				86EFCAF11CD202C50083BC18 /* OIDAuthState.m in Sources */,
+				86EFCAF21CD202CA0083BC18 /* OIDError.m in Sources */,
+				86EFCAF51CD202D60083BC18 /* OIDGrantTypes.m in Sources */,
+				86EFCAF71CD202DD0083BC18 /* OIDScopes.m in Sources */,
+				86EFCAF01CD202C10083BC18 /* OIDAuthorizationService.m in Sources */,
+				86EFCAFC1CD202EF0083BC18 /* OIDTokenResponse.m in Sources */,
+				86EFCAF61CD202DA0083BC18 /* OIDResponseTypes.m in Sources */,
+				86EFCAFB1CD202EC0083BC18 /* OIDTokenRequest.m in Sources */,
+				86EFCAF91CD202E50083BC18 /* OIDServiceConfiguration.m in Sources */,
+				86EFCAFA1CD202E80083BC18 /* OIDServiceDiscovery.m in Sources */,
+				86EFCAEF1CD202BE0083BC18 /* OIDAuthorizationResponse.m in Sources */,
+				86EFCAFE1CD202F90083BC18 /* OIDURLQueryComponent.m in Sources */,
+				86EFCAF31CD202CE0083BC18 /* OIDErrorUtilities.m in Sources */,
+				86EFCAFD1CD202F40083BC18 /* OIDTokenUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -511,6 +592,34 @@
 			};
 			name = Release;
 		};
+		86EFCAEB1CD202070083BC18 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		86EFCAEC1CD202070083BC18 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -537,6 +646,15 @@
 			buildConfigurations = (
 				341741F91C5D8283000EF209 /* Debug */,
 				341741FA1C5D8283000EF209 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		86EFCAED1CD202070083BC18 /* Build configuration list for PBXNativeTarget "AppAuth OSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				86EFCAEB1CD202070083BC18 /* Debug */,
+				86EFCAEC1CD202070083BC18 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

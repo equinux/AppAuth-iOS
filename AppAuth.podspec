@@ -25,8 +25,9 @@ tasks like performing an action with fresh tokens.
   s.source       = { :git => "https://github.com/openid/AppAuth-iOS.git", :tag => s.version }
 
   s.source_files = "Source", "Classes/**/*.{h,m}"
-  s.platform     = :ios, "7.0"
-  s.framework    = "SafariServices"
+  s.ios.deployment_target = "7.0"
+  s.ios.framework         = "SafariServices"
+  s.osx.deployment_target = "9.0"
   s.requires_arc = true
 
 end

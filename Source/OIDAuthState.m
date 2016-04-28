@@ -158,14 +158,16 @@ static const NSUInteger kExpiryTimeTolerance = 60;
 #else
 + (id<OIDAuthorizationFlowSession>)authStateByPresentingAuthorizationRequest:
     (OIDAuthorizationRequest *)authorizationRequest
-    presentingViewController:(NSViewController *)presentingViewController
-                    callback:(OIDAuthStateAuthorizationCallback)callback {
+        presentationCallback:(OIDWebViewControllerPresentationCallback)presentation
+           dismissalCallback:(OIDWebViewControllerDismissalCallback)dismissal
+          completionCallback:(OIDAuthStateAuthorizationCallback)completion {
   // presents the authorization request
   id<OIDAuthorizationFlowSession> authFlowSession =
       [OIDAuthorizationService presentAuthorizationRequest:authorizationRequest
-                                  presentingViewController:presentingViewController
-          callback:^(OIDAuthorizationResponse *_Nullable authorizationResponse,
-                     NSError *_Nullable error) {
+                                      presentationCallback:presentation
+                                         dismissalCallback:dismissal
+          completionCallback:^(OIDAuthorizationResponse * _Nullable authorizationResponse,
+                               NSError * _Nullable error) {
     // inspects response and processes further if needed (e.g. authorization code exchange)
     if (authorizationResponse) {
       if ([authorizationRequest.responseType isEqualToString:OIDResponseTypeCode]) {
@@ -180,16 +182,16 @@ static const NSUInteger kExpiryTimeTolerance = 60;
             authState = [[OIDAuthState alloc] initWithAuthorizationResponse:authorizationResponse
                                                               tokenResponse:tokenResponse];
           }
-          callback(authState, error);
+          completion(authState, error);
         }];
       } else {
         // implicit or hybrid flow (hybrid flow assumes code is not for this client)
         OIDAuthState *authState =
             [[OIDAuthState alloc] initWithAuthorizationResponse:authorizationResponse];
-        callback(authState, error);
+        completion(authState, error);
       }
     } else {
-      callback(nil, error);
+      completion(nil, error);
     }
   }];
   return authFlowSession;

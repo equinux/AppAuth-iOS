@@ -57,6 +57,8 @@
 		86EFCAFC1CD202EF0083BC18 /* OIDTokenResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 341741D41C5D8243000EF209 /* OIDTokenResponse.m */; };
 		86EFCAFD1CD202F40083BC18 /* OIDTokenUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 341741D61C5D8243000EF209 /* OIDTokenUtilities.m */; };
 		86EFCAFE1CD202F90083BC18 /* OIDURLQueryComponent.m in Sources */ = {isa = PBXBuildFile; fileRef = 341741D81C5D8243000EF209 /* OIDURLQueryComponent.m */; };
+		86F3D50A1CD2468400A7B08F /* OIDWebViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 86F3D5081CD2468400A7B08F /* OIDWebViewController.h */; };
+		86F3D50B1CD2468400A7B08F /* OIDWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 86F3D5091CD2468400A7B08F /* OIDWebViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -146,6 +148,8 @@
 		3417422A1C5D8502000EF209 /* SafariServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
 		3417422C1C5D850C000EF209 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		86EFCAE51CD202070083BC18 /* libAppAuth OSX.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "libAppAuth OSX.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
+		86F3D5081CD2468400A7B08F /* OIDWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OIDWebViewController.h; sourceTree = "<group>"; };
+		86F3D5091CD2468400A7B08F /* OIDWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OIDWebViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -237,6 +241,8 @@
 				341741D61C5D8243000EF209 /* OIDTokenUtilities.m */,
 				341741D71C5D8243000EF209 /* OIDURLQueryComponent.h */,
 				341741D81C5D8243000EF209 /* OIDURLQueryComponent.m */,
+				86F3D5081CD2468400A7B08F /* OIDWebViewController.h */,
+				86F3D5091CD2468400A7B08F /* OIDWebViewController.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -285,6 +291,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				86F3D50A1CD2468400A7B08F /* OIDWebViewController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -443,6 +450,7 @@
 			files = (
 				86EFCAF81CD202E10083BC18 /* OIDScopeUtilities.m in Sources */,
 				86EFCAF41CD202D30083BC18 /* OIDFieldMapping.m in Sources */,
+				86F3D50B1CD2468400A7B08F /* OIDWebViewController.m in Sources */,
 				86EFCAEE1CD202BA0083BC18 /* OIDAuthorizationRequest.m in Sources */,
 				86EFCAF11CD202C50083BC18 /* OIDAuthState.m in Sources */,
 				86EFCAF21CD202CA0083BC18 /* OIDError.m in Sources */,

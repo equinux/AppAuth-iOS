@@ -21,6 +21,7 @@
 # import <UIKit/UIKit.h>
 #else
 # import <Cocoa/Cocoa.h>
+# import "OIDWebViewController.h"
 #endif
 
 @class OIDAuthorization;
@@ -110,6 +111,7 @@ typedef NSDictionary<NSString *, NSString *> *_Nullable OIDTokenEndpointParamete
 + (void)discoverServiceConfigurationForDiscoveryURL:(NSURL *)discoveryURL
                                          completion:(OIDDiscoveryCallback)completion;
 
+#if TARGET_OS_IPHONE
 /*! @fn presentAuthorizationRequest:presentingViewController:callback:
     @brief Perform an authorization flow using \SFSafariViewController.
     @param request The authorization request.
@@ -120,16 +122,26 @@ typedef NSDictionary<NSString *, NSString *> *_Nullable OIDTokenEndpointParamete
         receives a @c OIDAuthorizationFlowSession.cancel message, or after processing a
         @c OIDAuthorizationFlowSession.resumeAuthorizationFlowWithURL: message.
  */
-#if TARGET_OS_IPHONE
 + (id<OIDAuthorizationFlowSession>)
     presentAuthorizationRequest:(OIDAuthorizationRequest *)request
        presentingViewController:(UIViewController *)presentingViewController
                        callback:(OIDAuthorizationCallback)callback;
 #else
+/*! @fn presentAuthorizationRequest:presentationCallback:dismissalCallback:completionCallback:
+    @brief Perform an authorization flow using a web view controller.
+    @param request The authorization request.
+    @param presentation Callback to present the web view controller.
+    @param dismissal Callback to dismiss the presented the web view controller.
+    @param completion The method called when the request has completed or failed.
+    @return A @c OIDAuthorizationFlowSession instance which will terminate when it
+        receives a @c OIDAuthorizationFlowSession.cancel message, or after processing a
+        @c OIDAuthorizationFlowSession.resumeAuthorizationFlowWithURL: message.
+ */
 + (id<OIDAuthorizationFlowSession>)
     presentAuthorizationRequest:(OIDAuthorizationRequest *)request
-       presentingViewController:(NSViewController *)presentingViewController
-                       callback:(OIDAuthorizationCallback)callback;
+    presentationCallback:(OIDWebViewControllerPresentationCallback)presentation
+    dismissalCallback:(OIDWebViewControllerDismissalCallback)dismissal
+    completionCallback:(OIDAuthorizationCallback)completion;
 #endif
 
 /*! @fn performTokenRequest:callback:

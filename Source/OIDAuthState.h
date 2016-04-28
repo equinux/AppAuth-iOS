@@ -20,6 +20,7 @@
 # import <UIKit/UIKit.h>
 #else
 # import <Cocoa/Cocoa.h>
+# import "OIDWebViewController.h"
 #endif
 
 @class OIDAuthorizationRequest;
@@ -125,6 +126,7 @@ typedef void (^OIDAuthStateAuthorizationCallback)(OIDAuthState *_Nullable authSt
  */
 @property(nonatomic, weak, nullable) id<OIDAuthStateErrorDelegate> errorDelegate;
 
+#if TARGET_OS_IPHONE
 /*! @fn authStateByPresentingAuthorizationRequest:presentingViewController:callback:
     @brief Convenience method to create a @c OIDAuthState by presenting an authorization request
         and performing the authorization code exchange in the case of code flow requests.
@@ -136,16 +138,27 @@ typedef void (^OIDAuthStateAuthorizationCallback)(OIDAuthState *_Nullable authSt
         receives a @c OIDAuthorizationFlowSession.cancel message, or after processing a
         @c OIDAuthorizationFlowSession.resumeAuthorizationFlowWithURL: message.
  */
-#if TARGET_OS_IPHONE
 + (id<OIDAuthorizationFlowSession>)authStateByPresentingAuthorizationRequest:
     (OIDAuthorizationRequest *)authorizationRequest
     presentingViewController:(UIViewController *)presentingViewController
                     callback:(OIDAuthStateAuthorizationCallback)callback;
 #else
+/*! @fn authStateByPresentingAuthorizationRequest:presentingViewController:callback:
+    @brief Convenience method to create a @c OIDAuthState by presenting an authorization request
+        and performing the authorization code exchange in the case of code flow requests.
+    @param authorizationRequest The authorization request to present.
+    @param presentation Callback to present the web view controller.
+    @param dismissal Callback to dismiss the presented the web view controller.
+    @param completion The method called when the request has completed or failed.
+    @return A @c OIDAuthorizationFlowSession instance which will terminate when it
+        receives a @c OIDAuthorizationFlowSession.cancel message, or after processing a
+        @c OIDAuthorizationFlowSession.resumeAuthorizationFlowWithURL: message.
+ */
 + (id<OIDAuthorizationFlowSession>)authStateByPresentingAuthorizationRequest:
     (OIDAuthorizationRequest *)authorizationRequest
-    presentingViewController:(NSViewController *)presentingViewController
-                    callback:(OIDAuthStateAuthorizationCallback)callback;
+        presentationCallback:(OIDWebViewControllerPresentationCallback)presentation
+           dismissalCallback:(OIDWebViewControllerDismissalCallback)dismissal
+          completionCallback:(OIDAuthStateAuthorizationCallback)completion;
 #endif
 
 /*! @fn init

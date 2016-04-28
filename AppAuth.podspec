@@ -27,7 +27,7 @@ tasks like performing an action with fresh tokens.
   s.source_files = "Source", "Classes/**/*.{h,m}"
   s.ios.deployment_target = "7.0"
   s.ios.framework         = "SafariServices"
-  s.osx.deployment_target = "9.0"
+  s.osx.deployment_target = "10.9"
   s.requires_arc = true
 
 end

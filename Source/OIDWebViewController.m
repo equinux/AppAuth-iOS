@@ -28,6 +28,17 @@
 
 @implementation OIDWebViewController
 
+
+- (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration
+{
+  self = [super initWithNibName:nil bundle:nil];
+  if (!self) return nil;
+
+  self.webView = [[WKWebView alloc] initWithFrame:self.view.bounds];
+
+  return self;
+}
+
 - (void)loadView
 {
   self.view = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600)];
@@ -36,7 +47,6 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
   
-  self.webView = [[WKWebView alloc] initWithFrame:self.view.bounds];
   [self.view addSubview:self.webView];
 }
 

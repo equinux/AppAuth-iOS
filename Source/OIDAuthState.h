@@ -147,6 +147,8 @@ typedef void (^OIDAuthStateAuthorizationCallback)(OIDAuthState *_Nullable authSt
     @brief Convenience method to create a @c OIDAuthState by presenting an authorization request
         and performing the authorization code exchange in the case of code flow requests.
     @param authorizationRequest The authorization request to present.
+    @param configuration The web view configuration. If nil is passed, the default configuration is
+        used.
     @param presentation Callback to present the web view controller.
     @param dismissal Callback to dismiss the presented the web view controller.
     @param completion The method called when the request has completed or failed.
@@ -156,6 +158,7 @@ typedef void (^OIDAuthStateAuthorizationCallback)(OIDAuthState *_Nullable authSt
  */
 + (id<OIDAuthorizationFlowSession>)authStateByPresentingAuthorizationRequest:
     (OIDAuthorizationRequest *)authorizationRequest
+               configuration:(WKWebViewConfiguration * _Nullable)configuration
         presentationCallback:(OIDWebViewControllerPresentationCallback)presentation
            dismissalCallback:(OIDWebViewControllerDismissalCallback)dismissal
           completionCallback:(OIDAuthStateAuthorizationCallback)completion;

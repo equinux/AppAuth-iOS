@@ -158,12 +158,14 @@ static const NSUInteger kExpiryTimeTolerance = 60;
 #else
 + (id<OIDAuthorizationFlowSession>)authStateByPresentingAuthorizationRequest:
     (OIDAuthorizationRequest *)authorizationRequest
+               configuration:(WKWebViewConfiguration * _Nullable)configuration
         presentationCallback:(OIDWebViewControllerPresentationCallback)presentation
            dismissalCallback:(OIDWebViewControllerDismissalCallback)dismissal
           completionCallback:(OIDAuthStateAuthorizationCallback)completion {
   // presents the authorization request
   id<OIDAuthorizationFlowSession> authFlowSession =
       [OIDAuthorizationService presentAuthorizationRequest:authorizationRequest
+                                             configuration:configuration
                                       presentationCallback:presentation
                                          dismissalCallback:dismissal
           completionCallback:^(OIDAuthorizationResponse * _Nullable authorizationResponse,

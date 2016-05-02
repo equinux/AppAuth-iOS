@@ -19,8 +19,8 @@
 #import <TargetConditionals.h>
 #if !TARGET_OS_IPHONE
 # import <Cocoa/Cocoa.h>
+# import <WebKit/WebKit.h>
 
-@class WKWebView;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -43,6 +43,13 @@ typedef void (^OIDWebViewControllerDismissalCallback)(NSViewController *controll
     @brief Provides a simple view controller that encapsulates a web view.
  */
 @interface OIDWebViewController : NSViewController
+
+
+/*! @fn initWithConfiguration:
+    @brief Designated initializer.
+    @param configuration The configuration for the web view.
+ */
+- (instancetype)initWithConfiguration:(WKWebViewConfiguration *)configuration;
 
 /*! @property webView
     @brief The view controller's web view.

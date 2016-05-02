@@ -60,9 +60,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)presentSafariViewControllerWithViewController:(UIViewController *)parentViewController
     callback:(OIDAuthorizationCallback)authorizationFlowCallback;
 #else
-- (void)presentWebViewControllerWithPresentationCallback:(OIDWebViewControllerPresentationCallback)presentation
-    dismissalCallback:(OIDWebViewControllerDismissalCallback)dismissal
-    completionCallback:(OIDAuthorizationCallback)completion;
+- (void)presentWebViewControllerWithConfiguration:(WKWebViewConfiguration *)configuration
+presentationCallback:(OIDWebViewControllerPresentationCallback)presentation
+   dismissalCallback:(OIDWebViewControllerDismissalCallback)dismissal
+  completionCallback:(OIDAuthorizationCallback)completion;
 #endif
 
 @end
@@ -108,13 +109,14 @@ NS_ASSUME_NONNULL_BEGIN
   }
 }
 #else
-- (void)presentWebViewControllerWithPresentationCallback:(OIDWebViewControllerPresentationCallback)presentation
+- (void)presentWebViewControllerWithConfiguration:(WKWebViewConfiguration *)configuration
+    presentationCallback:(OIDWebViewControllerPresentationCallback)presentation
     dismissalCallback:(OIDWebViewControllerDismissalCallback)dismissal
     completionCallback:(OIDAuthorizationCallback)completion {
   _pendingauthorizationFlowCallback = completion;
   _webCVDismissalCallback = dismissal;
   
-  OIDWebViewController *webViewController = [[OIDWebViewController alloc] initWithNibName:nil bundle:nil];
+  OIDWebViewController *webViewController = [[OIDWebViewController alloc] initWithConfiguration:configuration];
   _webVC = webViewController;
   presentation(webViewController);
   
@@ -367,14 +369,16 @@ decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction
 #else
 + (id<OIDAuthorizationFlowSession>)
     presentAuthorizationRequest:(OIDAuthorizationRequest *)request
-    presentationCallback:(OIDWebViewControllerPresentationCallback)presentation
-    dismissalCallback:(OIDWebViewControllerDismissalCallback)dismissal
-    completionCallback:(OIDAuthorizationCallback)completion {
+                  configuration:(WKWebViewConfiguration * _Nullable)configuration
+           presentationCallback:(OIDWebViewControllerPresentationCallback)presentation
+              dismissalCallback:(OIDWebViewControllerDismissalCallback)dismissal
+             completionCallback:(OIDAuthorizationCallback)completion {
   OIDAuthorizationFlowSessionImplementation *flow =
       [[OIDAuthorizationFlowSessionImplementation alloc] initWithRequest:request];
-  [flow presentWebViewControllerWithPresentationCallback:presentation
-                                       dismissalCallback:dismissal
-                                      completionCallback:completion];
+  [flow presentWebViewControllerWithConfiguration:configuration ?: [[WKWebViewConfiguration alloc] init]
+                             presentationCallback:presentation
+                                dismissalCallback:dismissal
+                               completionCallback:completion];
   return flow;
 }
 #endif

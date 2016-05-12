@@ -33,9 +33,11 @@
 {
   self = [super initWithNibName:nil bundle:nil];
   if (!self) return nil;
-
-  self.webView = [[WKWebView alloc] initWithFrame:self.view.bounds];
-
+	
+  // Do not reference the view here, it would cause a race condition (`viewDidLoad` gets called
+  // before we have a web view).
+  self.webView = [[WKWebView alloc] initWithFrame:NSZeroRect configuration:configuration];
+	
   return self;
 }
 
@@ -47,6 +49,8 @@
 - (void)viewDidLoad {
   [super viewDidLoad];
   
+  self.webView.frame = self.view.bounds;
+  self.webView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
   [self.view addSubview:self.webView];
 }
 

@@ -18,7 +18,11 @@
 
 #import "OIDAuthorizationService.h"
 
-#import <SafariServices/SafariServices.h>
+#if TARGET_OS_IPHONE
+# import <SafariServices/SafariServices.h>
+#else
+# import <WebKit/WebKit.h>
+#endif
 
 #import "OIDAuthorizationRequest.h"
 #import "OIDAuthorizationResponse.h"
@@ -29,6 +33,7 @@
 #import "OIDTokenRequest.h"
 #import "OIDTokenResponse.h"
 #import "OIDURLQueryComponent.h"
+#import "OIDWebViewController.h"
 
 /*! @var kOpenIDConfigurationWellKnownPath
     @brief Path appended to an OpenID Connect issuer for discovery
@@ -39,20 +44,37 @@ static NSString *const kOpenIDConfigurationWellKnownPath = @".well-known/openid-
 NS_ASSUME_NONNULL_BEGIN
 
 @interface OIDAuthorizationFlowSessionImplementation : NSObject <OIDAuthorizationFlowSession,
-                                                                 SFSafariViewControllerDelegate>
+#if TARGET_OS_IPHONE
+                                                                 SFSafariViewControllerDelegate
+#else
+                                                                 WKNavigationDelegate
+#endif
+                                                                >
 
 - (instancetype)init NS_UNAVAILABLE;
 
 - (nullable instancetype)initWithRequest:(OIDAuthorizationRequest *)request
     NS_DESIGNATED_INITIALIZER;
 
+#if TARGET_OS_IPHONE
 - (void)presentSafariViewControllerWithViewController:(UIViewController *)parentViewController
     callback:(OIDAuthorizationCallback)authorizationFlowCallback;
+#else
+- (void)presentWebViewControllerWithConfiguration:(WKWebViewConfiguration *)configuration
+presentationCallback:(OIDWebViewControllerPresentationCallback)presentation
+   dismissalCallback:(OIDWebViewControllerDismissalCallback)dismissal
+  completionCallback:(OIDAuthorizationCallback)completion;
+#endif
 
 @end
 
 @implementation OIDAuthorizationFlowSessionImplementation {
+#if TARGET_OS_IPHONE
   __weak SFSafariViewController *_safariVC;
+#else
+  __weak OIDWebViewController *_webVC;
+  OIDWebViewControllerDismissalCallback _webCVDismissalCallback;
+#endif
   OIDAuthorizationRequest *_request;
   OIDAuthorizationCallback _pendingauthorizationFlowCallback;
 }
@@ -65,6 +87,7 @@ NS_ASSUME_NONNULL_BEGIN
   return self;
 }
 
+#if TARGET_OS_IPHONE
 - (void)presentSafariViewControllerWithViewController:(UIViewController *)parentViewController
     callback:(OIDAuthorizationCallback)authorizationFlowCallback {
   _pendingauthorizationFlowCallback = authorizationFlowCallback;
@@ -85,7 +108,26 @@ NS_ASSUME_NONNULL_BEGIN
     }
   }
 }
+#else
+- (void)presentWebViewControllerWithConfiguration:(WKWebViewConfiguration *)configuration
+    presentationCallback:(OIDWebViewControllerPresentationCallback)presentation
+    dismissalCallback:(OIDWebViewControllerDismissalCallback)dismissal
+    completionCallback:(OIDAuthorizationCallback)completion {
+  _pendingauthorizationFlowCallback = completion;
+  _webCVDismissalCallback = dismissal;
+  
+  OIDWebViewController *webViewController = [[OIDWebViewController alloc] initWithConfiguration:configuration];
+  _webVC = webViewController;
+  presentation(webViewController);
+  
+  WKWebView *webView = webViewController.webView;
+  NSURL *URL = [_request authorizationRequestURL];
+  webView.navigationDelegate = self;
+  [webView loadRequest:[NSURLRequest requestWithURL:URL]];
+}
+#endif
 
+#if TARGET_OS_IPHONE
 - (void)cancel {
   SFSafariViewController *safari = _safariVC;
   _safariVC = nil;
@@ -96,6 +138,22 @@ NS_ASSUME_NONNULL_BEGIN
     [self didFinishWithResponse:nil error:error];
   }];
 }
+#else
+- (void)cancel {
+  OIDWebViewController *webVC = _webVC;
+  OIDWebViewControllerDismissalCallback dismis = _webCVDismissalCallback;
+  _webVC = nil;
+  _webCVDismissalCallback = nil;
+  
+  [webVC.webView stopLoading];
+  dismis(webVC, ^{
+    NSError *error = [OIDErrorUtilities errorWithCode:OIDErrorCodeUserCanceledAuthorizationFlow
+                                      underlyingError:nil
+                                          description:nil];
+    [self didFinishWithResponse:nil error:error];
+  });
+}
+#endif
 
 - (BOOL)shouldHandleURL:(NSURL *)URL {
   NSURL *standardizedURL = [URL standardizedURL];
@@ -153,6 +211,7 @@ NS_ASSUME_NONNULL_BEGIN
                             userInfo:userInfo];
   }
 
+#if TARGET_OS_IPHONE
   if (_safariVC) {
     SFSafariViewController *safari = _safariVC;
     _safariVC = nil;
@@ -162,16 +221,45 @@ NS_ASSUME_NONNULL_BEGIN
   } else {
     [self didFinishWithResponse:response error:error];
   }
+#else
+  OIDWebViewController *webVC = _webVC;
+  OIDWebViewControllerDismissalCallback dismis = _webCVDismissalCallback;
+  _webVC = nil;
+  _webCVDismissalCallback = nil;
+  
+  if (dismis) {
+    dismis(webVC, ^{
+      [self didFinishWithResponse:response error:error];
+    });
+  } else {
+    [self didFinishWithResponse:response error:error];
+  }
+#endif
 
   return YES;
 }
 
+#if TARGET_OS_IPHONE
 - (void)safariViewControllerDidFinish:(SFSafariViewController *)controller {
   NSError *error = [OIDErrorUtilities errorWithCode:OIDErrorCodeProgramCanceledAuthorizationFlow
                                     underlyingError:nil
                                         description:nil];
   [self didFinishWithResponse:nil error:error];
 }
+#else
+- (void)webView:(WKWebView *)webView
+decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction
+                decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+  NSURL *URL = navigationAction.request.URL;
+  if ([self shouldHandleURL:URL]) {
+    decisionHandler(WKNavigationActionPolicyCancel);
+    [self resumeAuthorizationFlowWithURL:URL];
+  } else {
+    decisionHandler(WKNavigationActionPolicyAllow);
+  }
+}
+#endif
 
 /*! @fn didFinishWithResponse:error:
     @brief Invokes the pending callback and performs cleanup.
@@ -181,7 +269,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)didFinishWithResponse:(nullable OIDAuthorizationResponse *)response
                         error:(nullable NSError *)error {
   OIDAuthorizationCallback callback = _pendingauthorizationFlowCallback;
+#if TARGET_OS_IPHONE
   _safariVC = nil;
+#else
+  _webVC = nil;
+  _webCVDismissalCallback = nil;
+#endif
   _pendingauthorizationFlowCallback = nil;
 
   if (callback) {
@@ -262,6 +355,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Authorization Endpoint
 
+#if TARGET_OS_IPHONE
 + (id<OIDAuthorizationFlowSession>)
     presentAuthorizationRequest:(OIDAuthorizationRequest *)request
        presentingViewController:(UIViewController *)presentingViewController
@@ -272,6 +366,22 @@ NS_ASSUME_NONNULL_BEGIN
                                              callback:callback];
   return flow;
 }
+#else
++ (id<OIDAuthorizationFlowSession>)
+    presentAuthorizationRequest:(OIDAuthorizationRequest *)request
+                  configuration:(WKWebViewConfiguration * _Nullable)configuration
+           presentationCallback:(OIDWebViewControllerPresentationCallback)presentation
+              dismissalCallback:(OIDWebViewControllerDismissalCallback)dismissal
+             completionCallback:(OIDAuthorizationCallback)completion {
+  OIDAuthorizationFlowSessionImplementation *flow =
+      [[OIDAuthorizationFlowSessionImplementation alloc] initWithRequest:request];
+  [flow presentWebViewControllerWithConfiguration:configuration ?: [[WKWebViewConfiguration alloc] init]
+                             presentationCallback:presentation
+                                dismissalCallback:dismissal
+                               completionCallback:completion];
+  return flow;
+}
+#endif
 
 #pragma mark - Token Endpoint
 

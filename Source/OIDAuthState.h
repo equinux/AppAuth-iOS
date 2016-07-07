@@ -15,7 +15,13 @@
         See the License for the specific language governing permissions and
         limitations under the License.
  */
-#import <UIKit/UIKit.h>
+#import <TargetConditionals.h>
+#if TARGET_OS_IPHONE
+# import <UIKit/UIKit.h>
+#else
+# import <Cocoa/Cocoa.h>
+# import "OIDWebViewController.h"
+#endif
 
 @class OIDAuthorizationRequest;
 @class OIDAuthorizationResponse;
@@ -120,6 +126,7 @@ typedef void (^OIDAuthStateAuthorizationCallback)(OIDAuthState *_Nullable authSt
  */
 @property(nonatomic, weak, nullable) id<OIDAuthStateErrorDelegate> errorDelegate;
 
+#if TARGET_OS_IPHONE
 /*! @fn authStateByPresentingAuthorizationRequest:presentingViewController:callback:
     @brief Convenience method to create a @c OIDAuthState by presenting an authorization request
         and performing the authorization code exchange in the case of code flow requests.
@@ -135,6 +142,27 @@ typedef void (^OIDAuthStateAuthorizationCallback)(OIDAuthState *_Nullable authSt
     (OIDAuthorizationRequest *)authorizationRequest
     presentingViewController:(UIViewController *)presentingViewController
                     callback:(OIDAuthStateAuthorizationCallback)callback;
+#else
+/*! @fn authStateByPresentingAuthorizationRequest:presentingViewController:callback:
+    @brief Convenience method to create a @c OIDAuthState by presenting an authorization request
+        and performing the authorization code exchange in the case of code flow requests.
+    @param authorizationRequest The authorization request to present.
+    @param configuration The web view configuration. If nil is passed, the default configuration is
+        used.
+    @param presentation Callback to present the web view controller.
+    @param dismissal Callback to dismiss the presented the web view controller.
+    @param completion The method called when the request has completed or failed.
+    @return A @c OIDAuthorizationFlowSession instance which will terminate when it
+        receives a @c OIDAuthorizationFlowSession.cancel message, or after processing a
+        @c OIDAuthorizationFlowSession.resumeAuthorizationFlowWithURL: message.
+ */
++ (id<OIDAuthorizationFlowSession>)authStateByPresentingAuthorizationRequest:
+    (OIDAuthorizationRequest *)authorizationRequest
+               configuration:(WKWebViewConfiguration * _Nullable)configuration
+        presentationCallback:(OIDWebViewControllerPresentationCallback)presentation
+           dismissalCallback:(OIDWebViewControllerDismissalCallback)dismissal
+          completionCallback:(OIDAuthStateAuthorizationCallback)completion;
+#endif
 
 /*! @fn init
     @internal

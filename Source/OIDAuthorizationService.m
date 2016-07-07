@@ -66,6 +66,11 @@ presentationCallback:(OIDWebViewControllerPresentationCallback)presentation
   completionCallback:(OIDAuthorizationCallback)completion;
 #endif
 
+- (void)presentSafariViewControllerWithViewController:(UIViewController *)parentViewController
+    modalPresentationStyle:(UIModalPresentationStyle)modalPresentationStyle
+    modalTransitionStyle:(UIModalTransitionStyle)modalTransitionStyle
+    callback:(OIDAuthorizationCallback)authorizationFlowCallback;
+
 @end
 
 @implementation OIDAuthorizationFlowSessionImplementation {
@@ -90,6 +95,16 @@ presentationCallback:(OIDWebViewControllerPresentationCallback)presentation
 #if TARGET_OS_IPHONE
 - (void)presentSafariViewControllerWithViewController:(UIViewController *)parentViewController
     callback:(OIDAuthorizationCallback)authorizationFlowCallback {
+    [self presentSafariViewControllerWithViewController:parentViewController
+                                 modalPresentationStyle:UIModalPresentationFullScreen
+                                   modalTransitionStyle:UIModalTransitionStyleCoverVertical
+                                               callback:authorizationFlowCallback];
+}
+
+- (void)presentSafariViewControllerWithViewController:(UIViewController *)parentViewController
+                               modalPresentationStyle:(UIModalPresentationStyle)modalPresentationStyle
+                                 modalTransitionStyle:(UIModalTransitionStyle)modalTransitionStyle
+                                             callback:(OIDAuthorizationCallback)authorizationFlowCallback {
   _pendingauthorizationFlowCallback = authorizationFlowCallback;
   NSURL *URL = [_request authorizationRequestURL];
   if ([SFSafariViewController class]) {
@@ -97,6 +112,8 @@ presentationCallback:(OIDWebViewControllerPresentationCallback)presentation
                                                            entersReaderIfAvailable:NO];
     safariVC.delegate = self;
     _safariVC = safariVC;
+    _safariVC.modalPresentationStyle = modalPresentationStyle;
+    _safariVC.modalTransitionStyle = modalTransitionStyle;
     [parentViewController presentViewController:safariVC animated:YES completion:nil];
   } else {
     BOOL openedSafari = [[UIApplication sharedApplication] openURL:URL];
@@ -382,6 +399,21 @@ decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction
   return flow;
 }
 #endif
+
++ (id<OIDAuthorizationFlowSession>)
+    presentAuthorizationRequest:(OIDAuthorizationRequest *)request
+       presentingViewController:(UIViewController *)presentingViewController
+         modalPresentationStyle:(UIModalPresentationStyle)modalPresentationStyle
+           modalTransitionStyle:(UIModalTransitionStyle)modalTransitionStyle
+                       callback:(OIDAuthorizationCallback)callback {
+  OIDAuthorizationFlowSessionImplementation *flow =
+      [[OIDAuthorizationFlowSessionImplementation alloc] initWithRequest:request];
+  [flow presentSafariViewControllerWithViewController:presentingViewController
+                               modalPresentationStyle:modalPresentationStyle
+                                 modalTransitionStyle:modalTransitionStyle
+                                             callback:callback];
+  return flow;
+}
 
 #pragma mark - Token Endpoint
 

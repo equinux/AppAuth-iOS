@@ -148,6 +148,8 @@ typedef NSDictionary<NSString *, NSString *> *_Nullable OIDTokenEndpointParamete
     completionCallback:(OIDAuthorizationCallback)completion;
 #endif
 
+
+#if TARGET_OS_IPHONE
 /*! @fn presentAuthorizationRequest:presentingViewController:modalPresentationStyle:modalTransitionStyle:callback:
     @brief Perform an authorization flow using \SFSafariViewController.
     @param request The authorization request.
@@ -166,6 +168,7 @@ typedef NSDictionary<NSString *, NSString *> *_Nullable OIDTokenEndpointParamete
          modalPresentationStyle:(UIModalPresentationStyle)modalPresentationStyle
            modalTransitionStyle:(UIModalTransitionStyle)modalTransitionStyle
                        callback:(OIDAuthorizationCallback)callback;
+#endif
 
 /*! @fn performTokenRequest:callback:
     @brief Performs a token request.

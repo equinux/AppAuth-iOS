@@ -164,6 +164,8 @@ typedef void (^OIDAuthStateAuthorizationCallback)(OIDAuthState *_Nullable authSt
           completionCallback:(OIDAuthStateAuthorizationCallback)completion;
 #endif
 
+
+#if TARGET_OS_IPHONE
 /*! @fn authStateByPresentingAuthorizationRequest:presentingViewController:modalPresentationStyle:modalTransitionStyle:callback:
     @brief Convenience method to create a @c OIDAuthState by presenting an authorization request
         and performing the authorization code exchange in the case of code flow requests.
@@ -182,7 +184,8 @@ typedef void (^OIDAuthStateAuthorizationCallback)(OIDAuthState *_Nullable authSt
     presentingViewController:(UIViewController *)presentingViewController
       modalPresentationStyle:(UIModalPresentationStyle)modalPresentationStyle
         modalTransitionStyle:(UIModalTransitionStyle)modalTransitionStyle
-                    callback:(OIDAuthStateAuthorizationCallback)callback;
+					callback:(OIDAuthStateAuthorizationCallback)callback;
+#endif
 
 /*! @fn init
     @internal

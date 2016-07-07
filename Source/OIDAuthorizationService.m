@@ -58,18 +58,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if TARGET_OS_IPHONE
 - (void)presentSafariViewControllerWithViewController:(UIViewController *)parentViewController
-    callback:(OIDAuthorizationCallback)authorizationFlowCallback;
-#else
-- (void)presentWebViewControllerWithConfiguration:(WKWebViewConfiguration *)configuration
-presentationCallback:(OIDWebViewControllerPresentationCallback)presentation
-   dismissalCallback:(OIDWebViewControllerDismissalCallback)dismissal
-  completionCallback:(OIDAuthorizationCallback)completion;
-#endif
+                                             callback:(OIDAuthorizationCallback)authorizationFlowCallback;
 
 - (void)presentSafariViewControllerWithViewController:(UIViewController *)parentViewController
-    modalPresentationStyle:(UIModalPresentationStyle)modalPresentationStyle
-    modalTransitionStyle:(UIModalTransitionStyle)modalTransitionStyle
-    callback:(OIDAuthorizationCallback)authorizationFlowCallback;
+						       modalPresentationStyle:(UIModalPresentationStyle)modalPresentationStyle
+                                 modalTransitionStyle:(UIModalTransitionStyle)modalTransitionStyle
+                                             callback:(OIDAuthorizationCallback)authorizationFlowCallback;
+#else
+- (void)presentWebViewControllerWithConfiguration:(WKWebViewConfiguration *)configuration
+                             presentationCallback:(OIDWebViewControllerPresentationCallback)presentation
+                                dismissalCallback:(OIDWebViewControllerDismissalCallback)dismissal
+                               completionCallback:(OIDAuthorizationCallback)completion;
+#endif
 
 @end
 
@@ -383,6 +383,21 @@ decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction
                                              callback:callback];
   return flow;
 }
+
++ (id<OIDAuthorizationFlowSession>)
+    presentAuthorizationRequest:(OIDAuthorizationRequest *)request
+	   presentingViewController:(UIViewController *)presentingViewController
+         modalPresentationStyle:(UIModalPresentationStyle)modalPresentationStyle
+           modalTransitionStyle:(UIModalTransitionStyle)modalTransitionStyle
+					   callback:(OIDAuthorizationCallback)callback {
+	OIDAuthorizationFlowSessionImplementation *flow =
+	[[OIDAuthorizationFlowSessionImplementation alloc] initWithRequest:request];
+	[flow presentSafariViewControllerWithViewController:presentingViewController
+								 modalPresentationStyle:modalPresentationStyle
+								   modalTransitionStyle:modalTransitionStyle
+											   callback:callback];
+	return flow;
+}
 #else
 + (id<OIDAuthorizationFlowSession>)
     presentAuthorizationRequest:(OIDAuthorizationRequest *)request
@@ -399,21 +414,6 @@ decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction
   return flow;
 }
 #endif
-
-+ (id<OIDAuthorizationFlowSession>)
-    presentAuthorizationRequest:(OIDAuthorizationRequest *)request
-       presentingViewController:(UIViewController *)presentingViewController
-         modalPresentationStyle:(UIModalPresentationStyle)modalPresentationStyle
-           modalTransitionStyle:(UIModalTransitionStyle)modalTransitionStyle
-                       callback:(OIDAuthorizationCallback)callback {
-  OIDAuthorizationFlowSessionImplementation *flow =
-      [[OIDAuthorizationFlowSessionImplementation alloc] initWithRequest:request];
-  [flow presentSafariViewControllerWithViewController:presentingViewController
-                               modalPresentationStyle:modalPresentationStyle
-                                 modalTransitionStyle:modalTransitionStyle
-                                             callback:callback];
-  return flow;
-}
 
 #pragma mark - Token Endpoint
 
